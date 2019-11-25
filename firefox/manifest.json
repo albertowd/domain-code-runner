@@ -1,7 +1,7 @@
 {
   "background": {
     "scripts": [
-      "js/chrome-api.js",
+      "js/firefox-api.js",
       "js/install.js"
     ],
     "persistent": false
@@ -28,7 +28,6 @@
   },
   "permissions": [
     "activeTab",
-    "declarativeContent",
     "storage"
   ],
   "version": "1.0"

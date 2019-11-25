@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="css/bootstrap-4.3.1/bootstrap.min.css">
+  <link rel="stylesheet" href="css/options.css">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <script charset="utf-8" src="js/ace-1.4.7/min-nonconflict/ace.js" type="text/javascript"></script>
+  <script charset="utf-8" src="js/jquery-3.4.1/jquery-3.4.1.slim.min.js" type="text/javascript"></script>
+  <script charset="utf-8" src="js/bootstrap-4.3.1/bootstrap.bundle.min.js" type="text/javascript"></script>
+  <script charset="utf-8" src="js/firefox-api.js" type="text/javascript"></script>
+  <script charset="utf-8" src="js/options.js" type="text/javascript"></script>
+
+  <title>Domain Code Runner Options Page</title>
+</head>
+
+<body class="bg-dark text-light">
+  <div class="container">
+    <div class="py-5 text-center">
+      <img alt="Domain Code Runner icon." class="d-block mb-4 mx-auto" height="64" src="images/icon48.png" width="64">
+      <h2>Domain Code Runner</h2>
+      <p class="lead">Configure your domains and the code it will run within the page on clicking the extension button.
+      </p>
+    </div>
+    <div class="row">
+      <div class="col text-right">
+        <h4>Domain:</h4>
+      </div>
+      <div class="col">
+        <select id="domains">
+          <option selected>New</option>
+        </select>
+      </div>
+    </div>
+    <input id="url" placeholder="globo.com" name="url" type="text"></input>
+    <div id="script">// Your javascript code here...</div>
+    <div class="py-4 text-center row">
+      <div class="col">
+        <button class="btn btn-danger btn-lg" id="delete">Delete</button>
+      </div>
+      <div class="col">
+        <button class="btn btn-success btn-lg" id="save">Save</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
