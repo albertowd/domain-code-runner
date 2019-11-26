@@ -2,6 +2,10 @@ input {
   width: 100%;
 }
 
+#importFile {
+  display: none;
+}
+
 #script {
   height: 300px;
 }

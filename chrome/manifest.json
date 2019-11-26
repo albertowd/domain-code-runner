@@ -2,7 +2,8 @@
   "background": {
     "scripts": [
       "js/chrome-api.js",
-      "js/install.js"
+      "js/default.js",
+      "js/background.js"
     ],
     "persistent": false
   },

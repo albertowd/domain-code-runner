@@ -9,6 +9,8 @@ function fetchDomains(callback) {
     if (data && undefined !== data.domains) {
       console.debug('Fetched ' + data.domains.length + ' domains.');
       callback(data.domains);
+    } else {
+      callback([]);
     }
   });
 }

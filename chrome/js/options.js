@@ -20,15 +20,41 @@ function deleteDomain() {
   const url = $('#url').val();
   console.info('Deleting domain ' + url + '...');
   domains = domains.filter((domain) => url != domain.url);
-  storeDomains(domains, function () {
+  storeDomains(domains, () => {
     setDomain({ code: defaultCode, url: '' });
     loadDomains(defaultDomain);
   });
 }
 
+function exportDomains() {
+  console.log('Exporting domains...')
+  $('<a></a>')
+    .attr('id', 'downloadFile')
+    .attr('href', 'data:text/csv;charset=utf8,' + encodeURIComponent(JSON.stringify(domains)))
+    .attr('download', 'domain-code-runner.json')
+    .appendTo('body');
+
+  $('#downloadFile').ready(() => {
+    $('#downloadFile').get(0).click();
+    $('#downloadFile').remove()
+  });
+}
+
+function importFile() {
+  console.log('Importing file...')
+  const fileName = $('#importFile').get(0).files[0];
+  if (fileName) {
+    var reader = new FileReader();
+    reader.readAsText(fileName);
+    reader.onload = (e) => {
+      storeDomains(JSON.parse(e.target.result), () => loadDomains());
+    };
+  }
+}
+
 function onDomainChanged() {
   const url = $("#domains option:selected").val();
-  if ('New domain...' == url) {
+  if (defaultDomain == url) {
     console.debug('New domain selected.');
     setDomain({ code: defaultCode, url: '' });
   }
@@ -40,10 +66,11 @@ function onDomainChanged() {
       }
     }
   }
+  toggleDelete();
 }
 
 function loadDomains(url) {
-  fetchDomains(function (storeDomains) {
+  fetchDomains((storeDomains) => {
     domains = storeDomains.sort((a, b) => (a.url > b.url) ? 1 : -1);
     loadOptions();
     if (url) {
@@ -64,14 +91,17 @@ function loadOptions() {
   console.debug('Loaded ' + domains.length + ' domains.');
 }
 
+function resetDomains() {
+  console.log('Reseting domains...');
+  storeDefaultDomains(() => loadDomains());
+}
+
 function saveDomain() {
   const url = $('#url').val();
   console.log('Saving domain ' + url + '...');
   domains = domains.filter((domain) => url != domain.url);
   domains.push({ code: editor ? editor.getValue() : '', url: url });
-  storeDomains(domains, function () {
-    loadDomains(url);
-  });
+  storeDomains(domains, () => loadDomains(url));
 }
 
 function setDomain(domain) {
@@ -80,7 +110,17 @@ function setDomain(domain) {
   $('#url').val(domain.url);
 }
 
-window.onload = function () {
+function toggleDelete() {
+  const del = $('#delete');
+  if (defaultDomain == $("#domains option:selected").val()) {
+    del.attr('disabled', true);
+  }
+  else {
+    del.removeAttr('disabled');
+  }
+}
+
+window.onload = () => {
   // Called after all assets have been loaded.
   editor = ace.edit("script");
   editor.setTheme("ace/theme/monokai");
@@ -88,6 +128,10 @@ window.onload = function () {
 
   $('#delete').on('click', deleteDomain);
   $('#domains').on('change', onDomainChanged);
+  $('#export').on('click', exportDomains);
+  $('#import').on('click', () => $('#importFile').click());
+  $('#importFile').on('change', importFile);
+  $('#reset').on('click', resetDomains);
   $('#save').on('click', saveDomain);
 
   loadDomains();

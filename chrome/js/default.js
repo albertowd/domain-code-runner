@@ -1,9 +1,3 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-'use strict';
-
 /**
  * Default code to run on globo.com domains.
  */
@@ -19,9 +13,13 @@ function defaultGloboScript() {
   }
 }
 
-// Executes the code on extension installation.
-chrome.runtime.onInstalled.addListener(function () {
-  console.log('Seting up extension...');
+/**
+ * Stores the default domain configures into the storage. It automatically updates all the
+ * domain rules used by the extension.
+ * @param {function} callback Callback function to be executed on update success.
+ */
+function storeDefaultDomains(callback) {
+  console.log('Storing default domains...');
   const defaultDomains = [
     {
       "code": defaultGloboScript.toString() + '\ndefaultGloboScript()\n',
@@ -34,8 +32,5 @@ chrome.runtime.onInstalled.addListener(function () {
   ];
 
   // Configure the default domains.
-  storeDomains(defaultDomains);
-  // Updates the extension rules to the default domains.
-  updateDomainRules(defaultDomains);
-  console.log('Extension setup completed.');
-});
+  storeDomains(defaultDomains, callback);
+}
