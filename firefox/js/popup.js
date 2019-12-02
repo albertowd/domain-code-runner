@@ -1,30 +1,19 @@
-/**
- * Execute code on each tab that matches the configurations.
- * @param {object[]} domains List of configured domains to run its codes.
- */
-function executeCodeOnTabs(domains) {
+// Executes the domain code on script load.
+DCR.fetchDomains().then(async (domains) => {
   // Queries the current tab on the current window.
-  browser.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    // The query returns an array of tabs with one in the current context.
-    for (const tab of tabs) {
-      // Iterates over the configured domains to know wich code to execute.
-      for (const domain of domains) {
-        // Test the current domain with the configured one.
-        if (new RegExp(domain.url).test(tab.url)) {
-          // Actually execute the configured code.
-          browser.tabs.executeScript(tab.id, { code: domain.code }, updateMessage);
-        }
+  const tab = await DCR.queryCurrentWindowTab();
+
+  // Iterates over the configured domains to know wich code to execute.
+  for (const domain of domains) {
+    // Test the current domain with the configured one.
+    if (new RegExp(domain.url).test(tab.url)) {
+      try {
+        await DCR.executeDomainCodeOnTab(domain.code, tab.id);
+        $('#message').text('Code executed.');
+      } catch (err) {
+        console.error(err);
+        $('#message').text('Code not executed!');
       }
     }
-  });
-}
-
-/**
- * Code execution callback to inform the user through the popup message.
- */
-function updateMessage() {
-  $('#message').text('Code executed!');
-}
-
-// Executes the domain code on script load.
-fetchDomains(executeCodeOnTabs);
+  }
+});

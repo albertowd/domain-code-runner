@@ -1,14 +1,10 @@
 /**
- * Class to handle Firefox API based code.
+ * Class to handle Chrome API based code.
  */
-class DCRFirefox extends DCRBase {
-  constructor() {
-    super();
-    this.setStorageListener();
-  }
+class DCRChrome extends DCRBase {
   /**
    * Execute a code script in a tab escope.
-   * @memberof DCRFirefox
+   * @memberof DCRChrome
    * @param {string} code Code to be executed.
    * @param {integer} tabId Tab identifier.
    * @static
@@ -16,64 +12,61 @@ class DCRFirefox extends DCRBase {
    * @returns {Promise<void>} Promise to return nothing.
    */
   async executeDomainCodeOnTab(code, tabId) {
-    await browser.tabs.executeScript(tabId, { code: code })
+    await new Promise((resolve, reject) => {
+      chrome.tabs.executeScript(tabId, { code: code }, () => {
+        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve();
+      });
+    });
   }
 
   /**
    * Fetched from the storage the configured domains.
-   * @memberof DCRFirefox
+   * @memberof DCRChrome
    * @static
    * @throws {Error} On storage error.
    * @returns {Promise<object[]>} List of configured domains or an empty list.
    */
   async fetchDomains() {
-    const data = await browser.storage.local.get('domains');
-    this.domains = data && undefined !== data.domains ? data.domains : [];
-    return this.domains;
+    return await new Promise((resolve, reject) => {
+      chrome.storage.local.get('domains', (data) => {
+        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve(data.domains);
+      });
+    });
   }
 
   /**
    * Fetched from the storage the configured domains.
-   * @memberof DCRFirefox
+   * @memberof DCRChrome
    * @static
    * @throws {Error} On storage error.
    * @returns {Promise<object[]>} List of configured domains or an empty list.
    */
   async queryCurrentWindowTab() {
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-    if (undefined === tabs[0]) {
-      throw new Error('No current tab found!');
-    }
-    return tabs[0];
+    return new Promise((resolve, reject) => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve(tabs[0]);
+      });
+    });
   }
 
   /**
    * Stores the list of domains configures into the local storage.
-   * @memberof DCRFirefox
+   * @memberof DCRChrome
    * @static
    * @param {object[]} domains List of domains configured by the user.
    * @throws {Error} On storage error.
    * @throws {Promise<void>} Promise to return nothing useful.
    */
   async storeDomains(domains) {
-    await browser.storage.local.set({ domains: domains ? domains : this.domains });
-  }
-
-  setStorageListener() {
-    browser.storage.onChanged.addListener((changes, area) => {
-      console.info('Detected storage changes, loading them...');
-      if ('local' === area) {
-        for (const item in Object.keys(changes)) {
-          if ('doamins' === item) {
-            this.domains = changes[item].newValue;
-          }
-        }
-      }
+    await new Promise(async (resolve, reject) => {
+      chrome.storage.local.set({ domains: domains }, () => {
+        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve();
+      });
     });
   }
 }
 
 // Updates the current DCR var to this version.
-if (browser) {
-  var DCR = new DCRFirefox();
+if (chrome) {
+  var DCR = new DCRChrome();
 }

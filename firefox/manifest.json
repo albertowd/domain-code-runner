@@ -1,10 +1,17 @@
 {
   "background": {
     "scripts": [
+      "js/api.js",
+      "js/chrome-api.js",
       "js/firefox-api.js",
-      "js/install.js"
-    ],
-    "persistent": false
+      "js/default.js",
+      "js/background.js"
+    ]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "42.0"
+    }
   },
   "description": "Runs scripts on certain domains.",
   "homepage_url": "https://github.com/albertowd/domain-code-runner",
@@ -16,7 +23,9 @@
   },
   "manifest_version": 2,
   "name": "Domain Code Runner",
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html"
+  },
   "page_action": {
     "default_icon": {
       "16": "images/icon16.png",
@@ -27,8 +36,10 @@
     "default_popup": "popup.html"
   },
   "permissions": [
+    "<all_urls>",
     "activeTab",
-    "storage"
+    "storage",
+    "tabs"
   ],
   "version": "1.0"
 }
