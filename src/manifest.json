@@ -1,0 +1,43 @@
+{
+  "author": "Alberto Wollmann Dietrich",
+  "background": {
+    "scripts": [
+      "js/api.js",
+      "js/chrome-api.js",
+      "js/firefox-api.js",
+      "js/default.js",
+      "js/background.js"
+    ]
+  },
+  "description": "Runs scripts on certain domains.",
+  "homepage_url": "https://github.com/albertowd/domain-code-runner",
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "incognito": "spanning",
+  "manifest_version": 2,
+  "name": "Domain Code Runner",
+  "options_ui": {
+    "page": "options.html"
+  },
+  "page_action": {
+    "default_icon": {
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "<all_urls>",
+    "activeTab",
+    "storage",
+    "tabs"
+  ],
+  "short_name": "DCR",
+  "version": "0.1.0"
+}
