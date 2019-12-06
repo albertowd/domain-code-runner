@@ -56,4 +56,20 @@ class DCRBase {
   setStorageListener() {
     throw new Error('Not implemented.');
   }
+
+  static getSupportedBrowser() {
+    return DCRBase.hasFirefoxSupport() ? browser : chrome;
+  }
+
+  static hasChromeSupport() {
+    return !DCRBase.hasFirefoxSupport();
+  }
+
+  static hasFirefoxSupport() {
+    try {
+      return undefined !== browser;
+    } catch (err) {
+      return false;
+    }
+  }
 }

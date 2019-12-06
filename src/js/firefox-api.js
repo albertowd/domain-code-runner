@@ -74,6 +74,7 @@ class DCRFirefox extends DCRBase {
 }
 
 // Updates the current DCR var to this version.
-if (browser) {
+if (DCRBase.hasFirefoxSupport()) {
+  console.info('Supporting firefox...');
   var DCR = new DCRFirefox();
 }

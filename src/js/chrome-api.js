@@ -2,6 +2,11 @@
  * Class to handle Chrome API based code.
  */
 class DCRChrome extends DCRBase {
+  constructor() {
+    super();
+    this.setStorageListener();
+  }
+
   /**
    * Execute a code script in a tab escope.
    * @memberof DCRChrome
@@ -29,7 +34,12 @@ class DCRChrome extends DCRBase {
   async fetchDomains() {
     return await new Promise((resolve, reject) => {
       chrome.storage.local.get('domains', (data) => {
-        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve(data.domains);
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          this.domains = data && undefined !== data.domains ? data.domains : [];
+          resolve(this.domains);
+        }
       });
     });
   }
@@ -64,9 +74,23 @@ class DCRChrome extends DCRBase {
       });
     });
   }
+
+  setStorageListener() {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      console.info('Detected storage changes, loading them...');
+      if ('local' === area) {
+        for (const item in Object.keys(changes)) {
+          if ('doamins' === item) {
+            this.domains = changes[item].newValue;
+          }
+        }
+      }
+    });
+  }
 }
 
 // Updates the current DCR var to this version.
-if (chrome) {
+if (DCRBase.hasChromeSupport()) {
+  console.info('Supporting chrome...');
   var DCR = new DCRChrome();
 }
