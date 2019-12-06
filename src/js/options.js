@@ -121,6 +121,8 @@ function toggleDelete() {
 }
 
 window.onload = () => {
+  $('#version').text(DCR.getVersion());
+
   // Called after all assets have been loaded.
   editor = ace.edit("script");
   editor.setTheme("ace/theme/monokai");

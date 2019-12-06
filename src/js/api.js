@@ -57,6 +57,10 @@ class DCRBase {
     throw new Error('Not implemented.');
   }
 
+  getVersion() {
+    return DCRBase.getSupportedBrowser().runtime.getManifest().version;
+  }
+
   static getSupportedBrowser() {
     return DCRBase.hasFirefoxSupport() ? browser : chrome;
   }
