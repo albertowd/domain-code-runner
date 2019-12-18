@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Default code to run on globo.com domains.
  */
@@ -29,7 +31,7 @@ async function storeDefaultDomains() {
   const defaultDomains = [
     {
       "code": defaultGloboScript.toString() + '\ndefaultGloboScript();\n',
-      "url": "globo.com"
+      "url": /.*globo\.com.*/
     }
   ];
 

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Class to handle Firefox API based code.
  */
@@ -29,6 +31,7 @@ class DCRFirefox extends DCRBase {
   async fetchDomains() {
     const data = await browser.storage.local.get('domains');
     this.domains = data && undefined !== data.domains ? data.domains : [];
+    this.domains = this.domains.map(DCRBase.storageToDomain);
     return this.domains;
   }
 
@@ -56,20 +59,8 @@ class DCRFirefox extends DCRBase {
    * @throws {Promise<void>} Promise to return nothing useful.
    */
   async storeDomains(domains) {
-    await browser.storage.local.set({ domains: domains ? domains : this.domains });
-  }
-
-  setStorageListener() {
-    browser.storage.onChanged.addListener((changes, area) => {
-      console.info('Detected storage changes, loading them...');
-      if ('local' === area) {
-        for (const item in Object.keys(changes)) {
-          if ('doamins' === item) {
-            this.domains = changes[item].newValue;
-          }
-        }
-      }
-    });
+    const toConvert = domains ? domains : this.domains;
+    await browser.storage.local.set({ domains: toConvert.map(DCRBase.domainToStorage) });
   }
 }
 

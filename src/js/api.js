@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Base class to handle API based code.
  */
@@ -54,11 +56,28 @@ class DCRBase {
   }
 
   setStorageListener() {
-    throw new Error('Not implemented.');
+    DCRBase.getSupportedBrowser().storage.onChanged.addListener((changes, area) => {
+      console.info('Detected storage changes, loading them...');
+      if ('local' === area) {
+        for (const changeName in Object.keys(changes)) {
+          if ('domains' === changeName) {
+            this.domains = changes[changeName].newValue.map(DCRBase.storageToDomain);
+          }
+        }
+      }
+    });
   }
 
   getVersion() {
     return DCRBase.getSupportedBrowser().runtime.getManifest().version;
+  }
+
+  static domainToStorage(domain) {
+    return { code: domain.code, url: domain.url.toString() };
+  }
+
+  static storageToDomain(domain) {
+    return { code: domain.code, url: new RegExp(domain.url) };
   }
 
   static getSupportedBrowser() {

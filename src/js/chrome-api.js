@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Class to handle Chrome API based code.
  */
@@ -38,6 +40,7 @@ class DCRChrome extends DCRBase {
           reject(chrome.runtime.lastError);
         } else {
           this.domains = data && undefined !== data.domains ? data.domains : [];
+          this.domains = this.domains.map(DCRBase.storageToDomain);
           resolve(this.domains);
         }
       });
@@ -68,23 +71,11 @@ class DCRChrome extends DCRBase {
    * @throws {Promise<void>} Promise to return nothing useful.
    */
   async storeDomains(domains) {
+    const toConvert = domains ? domains : this.domains;
     await new Promise(async (resolve, reject) => {
-      chrome.storage.local.set({ domains: domains }, () => {
+      chrome.storage.local.set({ domains: toConvert.map(DCRBase.domainToStorage) }, () => {
         chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve();
       });
-    });
-  }
-
-  setStorageListener() {
-    chrome.storage.onChanged.addListener((changes, area) => {
-      console.info('Detected storage changes, loading them...');
-      if ('local' === area) {
-        for (const item in Object.keys(changes)) {
-          if ('doamins' === item) {
-            this.domains = changes[item].newValue;
-          }
-        }
-      }
     });
   }
 }

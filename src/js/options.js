@@ -1,7 +1,3 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 'use strict';
 
 const defaultCode = '// Your javascript code here...';
@@ -19,7 +15,7 @@ function clearOptions() {
 async function deleteDomain() {
   const url = $('#url').val();
   console.info('Deleting domain ' + url + '...');
-  domains = domains.filter((domain) => url != domain.url);
+  domains = domains.filter((domain) => url != domain.toString());
   await storeDomains(domains);
   clearOptions();
   await loadDomains(defaultDomain);
@@ -60,7 +56,7 @@ function onDomainChanged() {
   }
   else {
     for (const domain of domains) {
-      if (url == domain.url) {
+      if (url == domain.url.toString()) {
         console.debug('Domain ' + url + ' selected.');
         setDomain(domain);
       }
@@ -83,7 +79,7 @@ function loadOptions() {
   console.debug('Loading domain options...');
   const select = $('#domains');
   for (const domain of domains) {
-    const url = domain.url;
+    const url = domain.url.toString();
     select.append($('<option>').text(url).val(url));
   }
   console.debug('Loaded ' + domains.length + ' domains.');
@@ -98,16 +94,16 @@ async function resetDomains() {
 async function saveDomain() {
   const url = $('#url').val();
   console.log('Saving domain ' + url + '...');
-  domains = domains.filter((domain) => url != domain.url);
-  domains.push({ code: editor ? editor.getValue() : '', url: url });
+  domains = domains.filter((domain) => url != domain.url.toString());
+  domains.push({ code: editor ? editor.getValue() : '', url: new RegExp(url) });
   await DCR.storeDomains(domains);
   await loadDomains(url);
 }
 
 function setDomain(domain) {
-  console.debug('Setting domain ' + domain.url + ' on editor...');
+  console.debug('Setting domain ' + domain.url.toString() + ' on editor...');
   editor ? editor.setValue(domain.code, -1) : console.error(editorError, -1);
-  $('#url').val(domain.url);
+  $('#url').val(domain.url.toString());
 }
 
 function toggleDelete() {
