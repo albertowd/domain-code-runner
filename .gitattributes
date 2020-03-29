@@ -1,1 +1,3 @@
-* - all file should keep it EOL untouched!
+* eol=lf
+
+*.png binary

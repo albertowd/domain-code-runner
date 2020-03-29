@@ -1,9 +1,12 @@
+'use strict';
+
 /**
  * Base class to handle API based code.
  */
 class DCRBase {
   constructor() {
     this.domains = [];
+    this.browser = DCRBase.getSupportedBrowser();
   }
 
   /**
@@ -54,11 +57,33 @@ class DCRBase {
   }
 
   setStorageListener() {
-    throw new Error('Not implemented.');
+    this.browser.storage.onChanged.addListener((changes, area) => {
+      console.info('Detected storage changes, loading them...');
+      if ('local' === area) {
+        for (const changeName of Object.keys(changes)) {
+          if ('domains' === changeName) {
+            this.domains = changes[changeName].newValue.map(DCRBase.storageToDomain);
+            console.debug('Domain(s) loaded: ' + this.domains.length);
+          }
+        }
+      }
+    });
+  }
+
+  getBrowser() {
+    return this.browser;
   }
 
   getVersion() {
     return DCRBase.getSupportedBrowser().runtime.getManifest().version;
+  }
+
+  static domainToStorage(domain) {
+    return { code: domain.code, url: domain.url.source };
+  }
+
+  static storageToDomain(domain) {
+    return { code: domain.code, url: new RegExp(domain.url) };
   }
 
   static getSupportedBrowser() {
