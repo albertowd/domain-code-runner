@@ -1,14 +1,16 @@
 'use strict';
 
-const supportedBrowser = DCRBase.getSupportedBrowser();
+const supportedBrowser = DCR.getBrowser();
 
 async function updatePageAction() {
-  const tab = await DCR.queryCurrentWindowTab()
-  let hasAction = false;
-  for (const domain of DCR.domains) {
-    hasAction |= domain.url.test(tab.url);
+  const tab = await DCR.queryCurrentWindowTab();
+  if (tab) {
+    let hasAction = false;
+    for (const domain of DCR.domains) {
+      hasAction |= domain.url.test(tab.url);
+    }
+    hasAction ? supportedBrowser.pageAction.show(tab.id) : supportedBrowser.pageAction.hide(tab.id);
   }
-  hasAction ? supportedBrowser.pageAction.show(tab.id) : supportedBrowser.pageAction.hide(tab.id);
 }
 
 supportedBrowser.runtime.onInstalled.addListener(async () => {

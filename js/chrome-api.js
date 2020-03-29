@@ -7,6 +7,7 @@ class DCRChrome extends DCRBase {
   constructor() {
     super();
     this.setStorageListener();
+    this.fetchDomains();
   }
 
   /**

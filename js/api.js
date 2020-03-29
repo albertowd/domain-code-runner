@@ -6,6 +6,7 @@
 class DCRBase {
   constructor() {
     this.domains = [];
+    this.browser = DCRBase.getSupportedBrowser();
   }
 
   /**
@@ -56,16 +57,21 @@ class DCRBase {
   }
 
   setStorageListener() {
-    DCRBase.getSupportedBrowser().storage.onChanged.addListener((changes, area) => {
+    this.browser.storage.onChanged.addListener((changes, area) => {
       console.info('Detected storage changes, loading them...');
       if ('local' === area) {
-        for (const changeName in Object.keys(changes)) {
+        for (const changeName of Object.keys(changes)) {
           if ('domains' === changeName) {
             this.domains = changes[changeName].newValue.map(DCRBase.storageToDomain);
+            console.debug('Domain(s) loaded: ' + this.domains.length);
           }
         }
       }
     });
+  }
+
+  getBrowser() {
+    return this.browser;
   }
 
   getVersion() {
@@ -73,7 +79,7 @@ class DCRBase {
   }
 
   static domainToStorage(domain) {
-    return { code: domain.code, url: domain.url.toString() };
+    return { code: domain.code, url: domain.url.source };
   }
 
   static storageToDomain(domain) {

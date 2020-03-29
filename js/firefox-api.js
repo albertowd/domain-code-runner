@@ -7,6 +7,7 @@ class DCRFirefox extends DCRBase {
   constructor() {
     super();
     this.setStorageListener();
+    this.fetchDomains();
   }
   /**
    * Execute a code script in a tab escope.
