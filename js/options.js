@@ -1,7 +1,3 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 'use strict';
 
 const defaultCode = '// Your javascript code here...';
@@ -19,17 +15,18 @@ function clearOptions() {
 async function deleteDomain() {
   const url = $('#url').val();
   console.info('Deleting domain ' + url + '...');
-  domains = domains.filter((domain) => url != domain.url);
-  await storeDomains(domains);
+  domains = domains.filter((domain) => url != domain.url.source);
+  await DCR.storeDomains(domains);
   clearOptions();
   await loadDomains(defaultDomain);
 }
 
 function exportDomains() {
-  console.log('Exporting domains...')
+  console.info('Exporting domains...');
+  const converted = domains.map(DCRBase.domainToStorage);
   $('<a></a>')
     .attr('id', 'downloadFile')
-    .attr('href', 'data:text/csv;charset=utf8,' + encodeURIComponent(JSON.stringify(domains)))
+    .attr('href', 'data:text/csv;charset=utf8,' + encodeURIComponent(JSON.stringify(converted)))
     .attr('download', 'domain-code-runner.json')
     .appendTo('body');
 
@@ -40,13 +37,14 @@ function exportDomains() {
 }
 
 async function importFile() {
-  console.log('Importing file...')
+  console.info('Importing file...')
   const fileName = $('#importFile').get(0).files[0];
   if (fileName) {
     var reader = new FileReader();
     reader.readAsText(fileName);
     reader.onload = async (result) => {
-      await DCR.storeDomains(JSON.parse(result.target.result));
+      const parsed = JSON.parse(decodeURIComponent(result.target.result));
+      await DCR.storeDomains(parsed.map(DCRBase.storageToDomain));
       await loadDomains();
     };
   }
@@ -60,7 +58,7 @@ function onDomainChanged() {
   }
   else {
     for (const domain of domains) {
-      if (url == domain.url) {
+      if (url == domain.url.source) {
         console.debug('Domain ' + url + ' selected.');
         setDomain(domain);
       }
@@ -70,7 +68,7 @@ function onDomainChanged() {
 }
 
 async function loadDomains(url) {
-  domains = (await DCR.fetchDomains()).sort((a, b) => (a.url > b.url) ? 1 : -1);
+  domains = (await DCR.fetchDomains()).sort((a, b) => (a.url.source > b.url.source) ? 1 : -1);
   loadOptions();
   if (url) {
     $('#domains').val(url);
@@ -83,31 +81,32 @@ function loadOptions() {
   console.debug('Loading domain options...');
   const select = $('#domains');
   for (const domain of domains) {
-    const url = domain.url;
+    const url = domain.url.source;
+    console.log(domain);
     select.append($('<option>').text(url).val(url));
   }
   console.debug('Loaded ' + domains.length + ' domains.');
 }
 
 async function resetDomains() {
-  console.log('Reseting domains...');
+  console.info('Reseting domains...');
   await storeDefaultDomains();
   await loadDomains();
 }
 
 async function saveDomain() {
   const url = $('#url').val();
-  console.log('Saving domain ' + url + '...');
-  domains = domains.filter((domain) => url != domain.url);
-  domains.push({ code: editor ? editor.getValue() : '', url: url });
+  console.info('Saving domain ' + url + '...');
+  domains = domains.filter((domain) => url != domain.url.source);
+  domains.push({ code: editor ? editor.getValue() : '', url: new RegExp(url) });
   await DCR.storeDomains(domains);
   await loadDomains(url);
 }
 
 function setDomain(domain) {
-  console.debug('Setting domain ' + domain.url + ' on editor...');
+  console.debug('Setting domain ' + domain.url.source + ' on editor...');
   editor ? editor.setValue(domain.code, -1) : console.error(editorError, -1);
-  $('#url').val(domain.url);
+  $('#url').val(domain.url.source);
 }
 
 function toggleDelete() {
