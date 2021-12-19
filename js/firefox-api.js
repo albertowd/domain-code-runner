@@ -14,12 +14,14 @@ class DCRFirefox extends DCRBase {
    * @memberof DCRFirefox
    * @param {string} code Code to be executed.
    * @param {integer} tabId Tab identifier.
+   * @param {string} codeRegEx Code reference.
    * @static
    * @throws {Error} On execution failure.
-   * @returns {Promise<void>} Promise to return nothing.
+   * @returns {Promise<string>} Promise to return nothing.
    */
-  async executeDomainCodeOnTab(code, tabId) {
+  async executeDomainCodeOnTab(code, tabId, codeRegEx) {
     await browser.tabs.executeScript(tabId, { code: code })
+    return codeRegEx;
   }
 
   /**

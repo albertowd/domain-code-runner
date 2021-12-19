@@ -14,11 +14,12 @@ class DCRBase {
    * @memberof DCRBase
    * @param {string} code Code to be executed.
    * @param {integer} tabId Tab identifier.
+   * @param {string} codeRegEx Code reference.
    * @static
    * @throws {Error} On execution failure.
-   * @returns {Promise<void>} Promise to return nothing.
+   * @returns {Promise<string>} Promise to return nothing.
    */
-  async executeDomainCodeOnTab(code, tabId) {
+  async executeDomainCodeOnTab(code, tabId, codeRegEx) {
     throw new Error('Not implemented.');
   }
 

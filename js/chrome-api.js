@@ -15,14 +15,15 @@ class DCRChrome extends DCRBase {
    * @memberof DCRChrome
    * @param {string} code Code to be executed.
    * @param {integer} tabId Tab identifier.
+   * @param {string} codeRegEx Code reference.
    * @static
    * @throws {Error} On execution failure.
-   * @returns {Promise<void>} Promise to return nothing.
+   * @returns {Promise<string>} Promise to return nothing.
    */
-  async executeDomainCodeOnTab(code, tabId) {
-    await new Promise((resolve, reject) => {
+  async executeDomainCodeOnTab(code, tabId, codeRegEx) {
+    return await new Promise((resolve, reject) => {
       chrome.tabs.executeScript(tabId, { code: code }, () => {
-        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve();
+        chrome.runtime.lastError ? reject(chrome.runtime.lastError) : resolve(codeRegEx);
       });
     });
   }
