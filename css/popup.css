@@ -1,3 +1,8 @@
 body {
   padding: 10px;
 }
+
+#message p span {
+  color: #9BC13C;
+  font-weight: bold;
+}

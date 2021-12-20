@@ -3,7 +3,7 @@ DCR.fetchDomains().then(async (domains) => {
   $('#error').addClass('d-none');
   $('#logo').addClass('d-none');
   $('#spinner').removeClass('d-none');
-  $('#message').text('Executing code...');
+  $('#message').html('<p>Executing code...</p>');
 
   // Queries the current tab on the current window.
   const tab = await DCR.queryCurrentWindowTab();
@@ -26,20 +26,20 @@ DCR.fetchDomains().then(async (domains) => {
         $('#error').addClass('d-none');
         $('#logo').removeClass('d-none');
         $('#spinner').addClass('d-none');
-        $('#message').text('Code executed for: \n' + runnedRegexes.join('\n'));
+        $('#message').html('<p>Code executed for\n<span>' + runnedRegexes.join('</span>\n<span>') + '</span></p>');
       }, 1000);
     } catch (err) {
       $('#error').removeClass('d-none');
       $('#logo').addClass('d-none');
       $('#spinner').addClass('d-none');
       console.error(err);
-      $('#message').text('Code execution error: \n' + err.message);
+      $('#message').html('<p>Code execution error\n' + err.message + '</p>');
     }
   } else {
     // Nothing happened.
     $('#error').addClass('d-none');
     $('#logo').removeClass('d-none');
     $('#spinner').addClass('d-none');
-    $('#message').text('No coded was executed.');
+    $('#message').html('<p>No coded was executed.</p>');
   }
 });
