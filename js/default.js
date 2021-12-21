@@ -24,11 +24,18 @@ function defaultAbrilScript() {
  */
 function defaultGloboScript() {
   // Gets the 'detecta-adblock' div to remove it.
-  const idElem = document.getElementById('detecta-adblock');
-  if (idElem) {
-    idElem.parentNode.removeChild(idElem);
+  const da = document.getElementById('detecta-adblock');
+  if (da) {
+    da.parentNode.removeChild(da);
   }
 
+  // Gets the 'gcomPromo' div to remove it.
+  const gcomPromo = document.getElementById('gcomPromo');
+  if (gcomPromo) {
+    gcomPromo.parentNode.removeChild(gcomPromo);
+  }
+
+  // Removes
   for (const classElem of document.getElementsByClassName('paywall-cpt')) {
     classElem.parentNode.removeChild(classElem);
   }

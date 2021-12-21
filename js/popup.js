@@ -26,7 +26,7 @@ DCR.fetchDomains().then(async (domains) => {
         $('#error').addClass('d-none');
         $('#logo').removeClass('d-none');
         $('#spinner').addClass('d-none');
-        $('#message').html('<p>Code executed for\n<span>' + runnedRegexes.join('</span>\n<span>') + '</span></p>');
+        $('#message').html('<p>Code executed for\n<small><span>' + runnedRegexes.join('</span>\n<span>') + '</span></small></p>');
       }, 1000);
     } catch (err) {
       $('#error').removeClass('d-none');
