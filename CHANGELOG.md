@@ -6,7 +6,7 @@
 * CHANGELOG.md
 * README.md
 
-## Updated
+### Updated
 * Globo.com default code
 * Libraries update
 * New popup window
